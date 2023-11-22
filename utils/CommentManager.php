@@ -34,10 +34,20 @@ class CommentManager
 
 	public function addCommentForNews($body, $newsId)
 	{
-		$db = DB::getInstance();
-		$sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES('". $body . "','" . date('Y-m-d') . "','" . $newsId . "')";
-		$db->exec($sql);
-		return $db->lastInsertId($sql);
+
+
+		$db = $this->getInstance();
+        $sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES(:body, :created_at, :news_id)";
+        $params = [
+            ':body' => $body,
+            ':created_at' => date('Y-m-d'),	
+            ':news_id' => $newsId,
+        ];
+        $db->execWithParams($sql, $params);
+
+        return $db->lastInsertId();
+
+	
 	}
 
 	public function deleteComment($id)
