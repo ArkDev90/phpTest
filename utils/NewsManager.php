@@ -76,8 +76,11 @@ class NewsManager
 			CommentManager::getInstance()->deleteComment($id);
 		}
 
-		$db = DB::getInstance();
-		$sql = "DELETE FROM `news` WHERE `id`=" . $id;
-		return $db->exec($sql);
+
+		$db = $this->getInstance();
+        $sql = "DELETE FROM `news` WHERE `id`=:id";
+        $params = [':id' => $id];
+        return $db->execWithParams($sql, $params);
+
 	}
 }
