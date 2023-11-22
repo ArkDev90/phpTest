@@ -25,17 +25,11 @@ class NewsManager
 	*/
 	public function listNews()
 	{
-		$db = DB::getInstance();
+		$db = $this->getDatabaseInstance();
 		$rows = $db->select('SELECT * FROM `news`');
 
-		$news = [];
-		foreach($rows as $row) {
-			
-			$news[] = new News($row['id'], $row['title'], $row['body'], $row['created_at']);
+		return $this->createNewsObjects($rows);
 	
-		}
-
-		return $news;
 	}
 
 	/**
@@ -44,14 +38,14 @@ class NewsManager
 	public function addNews($title, $body)
 	{
 
-		$db = $this->getInstance();
+		$db = $this->getDatabaseInstance();
         $sql = "INSERT INTO `news` (`title`, `body`, `created_at`) VALUES(:title, :body, :created_at)";
         $params = [
             ':title' => $title,
             ':body' => $body,
             ':created_at' => date('Y-m-d'),
         ];
-        $db->execWithParams($sql, $params);
+        $db->execWithParams($sql, $params);	
 
         return $db->lastInsertId();
 
@@ -77,10 +71,27 @@ class NewsManager
 		}
 
 
-		$db = $this->getInstance();
+		$db = $this->getDatabaseInstance();
         $sql = "DELETE FROM `news` WHERE `id`=:id";
         $params = [':id' => $id];
         return $db->execWithParams($sql, $params);
 
 	}
+
+	private function getDatabaseInstance()
+    {
+        return DB::getInstance();
+    }
+
+
+	private function createNewsObjects(array $rows): array
+    {
+        $news = [];
+        foreach ($rows as $row) {
+            $news[] = new News($row['id'], $row['title'], $row['body'], $row['created_at']);
+        }
+
+        return $news;
+    }
+
 }
