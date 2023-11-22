@@ -43,10 +43,19 @@ class NewsManager
 	*/
 	public function addNews($title, $body)
 	{
-		$db = DB::getInstance();
-		$sql = "INSERT INTO `news` (`title`, `body`, `created_at`) VALUES('". $title . "','" . $body . "','" . date('Y-m-d') . "')";
-		$db->exec($sql);
-		return $db->lastInsertId($sql);
+
+		$db = $this->getInstance();
+        $sql = "INSERT INTO `news` (`title`, `body`, `created_at`) VALUES(:title, :body, :created_at)";
+        $params = [
+            ':title' => $title,
+            ':body' => $body,
+            ':created_at' => date('Y-m-d'),
+        ];
+        $db->execWithParams($sql, $params);
+
+        return $db->lastInsertId();
+
+		
 	}
 
 	/**
