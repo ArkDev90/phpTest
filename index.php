@@ -4,6 +4,8 @@ define('ROOT', __DIR__);
 require_once(ROOT . '/utils/NewsManager.php');
 require_once(ROOT . '/utils/CommentManager.php');
 
+
+
 foreach (NewsManager::getInstance()->listNews() as $news) {
 	echo("############ NEWS " . $news->getTitle() . " ############\n");
 	echo($news->getBody() . "\n");
@@ -14,5 +16,21 @@ foreach (NewsManager::getInstance()->listNews() as $news) {
 	}
 }
 
-$commentManager = CommentManager::getInstance();
-$c = $commentManager->listComments();
+
+
+?>
+
+
+<html>
+	<head>
+
+	</head>
+	<body>
+			<tr>
+				<td>
+
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

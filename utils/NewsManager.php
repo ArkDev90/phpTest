@@ -84,7 +84,7 @@ class NewsManager
     }
 
 
-	private function createNewsObjects(array $rows): array
+	private function createNewsObjects(array $rows)
     {
         $news = [];
         foreach ($rows as $row) {

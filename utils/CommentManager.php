@@ -63,7 +63,7 @@ class CommentManager
     }
 
 	//Moved database instance creation to a separate method for better modularity.
-	private function createCommentObjects(array $rows): array
+	private function createCommentObjects(array $rows)
     {
         $comments = [];
         foreach ($rows as $row) {
