@@ -2,41 +2,54 @@
 
 class DB
 {
-	private $pdo;
+    private $pdo;
+    private static $instance = null;
 
-	private static $instance = null;
+    private function __construct()
+    {
+        $host = '127.0.0.1';
+        $databaseName = 'phptest';
+        $username = 'root';
+        $password = '';
 
-	private function __construct()
-	{
-		$dsn = 'mysql:dbname=phptest;host=127.0.0.1';
-		$user = 'root';
-		$password = '';
+        $dsn = "mysql:host=$host;dbname=$databaseName;charset=utf8mb4";
 
-		$this->pdo = new \PDO($dsn, $user, $password);
-	}
+        try {
+            $this->pdo = new \PDO($dsn, $username, $password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            // Handle connection error
+            die("Connection failed: " . $e->getMessage());
+        }
+    }
 
-	public static function getInstance()
-	{
-		if (null === self::$instance) {
-			$c = __CLASS__;
-			self::$instance = new $c;
-		}
-		return self::$instance;
-	}
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            $className = __CLASS__;
+            self::$instance = new $className;
+        }
+        return self::$instance;
+    }
 
-	public function select($sql)
-	{
-		$sth = $this->pdo->query($sql);
-		return $sth->fetchAll();
-	}
+    public function select($sql)
+    {
+        $statement = $this->pdo->query($sql);
+        return $statement->fetchAll();
+    }
 
-	public function exec($sql)
-	{
-		return $this->pdo->exec($sql);
-	}
+    public function execute($sql)
+    {
+        return $this->pdo->exec($sql);
+    }
 
-	public function lastInsertId()
-	{
-		return $this->pdo->lastInsertId();
-	}
+    public function prepare($sql)
+    {
+        return $this->pdo->prepare($sql);
+    }
+
+    public function getLastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
 }

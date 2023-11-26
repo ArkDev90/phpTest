@@ -34,15 +34,19 @@ class CommentManager
 
 
 		$db = $this->getDatabaseInstance();
-        $sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES(:body, :created_at, :news_id)";
-        $params = [
-            ':body' => $body,
-            ':created_at' => date('Y-m-d'),	
-            ':news_id' => $newsId,
-        ];
-        $db->execWithParams($sql, $params);
 
-        return $db->lastInsertId();
+		$sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES(:body, :created_at, :news_id)";
+		$stmt = $db->prepare($sql);
+	
+		// Bind parameters
+		$stmt->bindParam(':body', $body, PDO::PARAM_STR);
+		$stmt->bindParam(':created_at',  date('Y-m-d'), PDO::PARAM_STR);
+		$stmt->bindParam(':news_id', $newsId, PDO::PARAM_STR);
+	
+		// Execute the statement
+		$stmt->execute();
+
+        return $db->getLastInsertId();
 
 	
 	}
@@ -50,10 +54,17 @@ class CommentManager
 	public function deleteComment($id)
 	{
 		$db = $this->getDatabaseInstance();
-        $sql = "DELETE FROM `comment` WHERE `id`=:id";
-        $params = [':id' => $id];
-        
-        return $db->execWithParams($sql, $params);
+
+		
+
+		$sql = "DELETE FROM `comment` WHERE `id`=:id";
+		$stmt = $db->prepare($sql);
+	
+		// Bind parameters
+		$stmt->bindParam(':id', $id, PDO::PARAM_STR);
+	
+		// Execute the statement
+		return $stmt->execute();
 
 	}
 

@@ -36,21 +36,25 @@ class NewsManager
 	* add a record in news table
 	*/
 	public function addNews($title, $body)
-	{
+{
+    $db = DB::getInstance();
 
-		$db = $this->getDatabaseInstance();
-        $sql = "INSERT INTO `news` (`title`, `body`, `created_at`) VALUES(:title, :body, :created_at)";
-        $params = [
-            ':title' => $title,
-            ':body' => $body,
-            ':created_at' => date('Y-m-d'),
-        ];
-        $db->execWithParams($sql, $params);	
+    // Use prepared statements to prevent SQL injection
+    $sql = "INSERT INTO `news` (`title`, `body`, `created_at`) VALUES(:title, :body, :created_at)";
+    $stmt = $db->prepare($sql);
 
-        return $db->lastInsertId();
+    // Bind parameters
+    $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+    $stmt->bindParam(':body', $body, PDO::PARAM_STR);
+    $stmt->bindParam(':created_at', date('Y-m-d'), PDO::PARAM_STR);
 
-		
-	}
+    // Execute the statement
+    $stmt->execute();
+
+    // Return the last inserted ID
+    return $db->getLastInsertId();
+}
+
 
 	/**
 	* deletes a news, and also linked comments
@@ -70,11 +74,20 @@ class NewsManager
 			CommentManager::getInstance()->deleteComment($id);
 		}
 
+		
+	
 
-		$db = $this->getDatabaseInstance();
-        $sql = "DELETE FROM `news` WHERE `id`=:id";
-        $params = [':id' => $id];
-        return $db->execWithParams($sql, $params);
+
+		$db = DB::getInstance();
+		$sql = "DELETE FROM `news` WHERE `id`=:id";
+		$stmt = $db->prepare($sql);
+	
+		// Bind parameters
+		$stmt->bindParam(':id', $id, PDO::PARAM_STR);
+	
+		// Execute the statement
+		return $stmt->execute();
+
 
 	}
 
